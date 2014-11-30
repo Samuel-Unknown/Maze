@@ -107,57 +107,19 @@ void Maze::generate(int nH, int nV, int sH, int sV) {
     if ( (nH == 1 || nV == 1) )
         return;
 
-    // 2) если комната 2 х 2, то проводим одну границу внутри произвольно
-                                                        //         __ __
-                                                        //        |   |	|
-                                                        //        |__ __|
-    if (nH == 2 && nV == 2) {
-        switch (qrand() % 4) {
-            case 0: // горизонтальный слева
-                    cells[sV][sH]->set_bottom_edge(true);
-                break;
-            case 1: // горизонтальный справа
-                    cells[sV][sH + 1]->set_bottom_edge(true);
-                break;
-            case 2: // вертикальный сверху
-                    cells[sV][sH]->set_right_edge(true);
-                break;
-            case 3: // вертикальный снизу
-                    cells[sV + 1][sH]->set_right_edge(true);
-                break;
-        }
-        return;
-    }
-
-    // 3) если одна из сторон комнаты в две ячейки, а другая больше, то проводим лишь одну границу
-                                                                                                                        //    __ __ __
-                                                                                                                        //   |__ __    |
-                                                                                                                        //   |__ __ __|
-    if (nH == 2 && nV > 2) {
-        // делим комнату пополам
-        for (int i = sV; i < sV + nV; i++)
-            cells[i][sH]->set_right_edge(true);
-        // в произвольном месте ставим дырку
-        int tmp1 = qrand() % (nV) + sV;
-        cells[tmp1][sH]->set_right_edge(false);
-       return;
-    }
-    if (nH > 2 && nV == 2) {
-        // делим комнату пополам
-        for (int i = sH; i < sH + nH; i++)
-            cells[sV][i]->set_bottom_edge(true);
-        // в произвольном месте ставим дырку
-        int tmp2 = qrand() % (nH) + sH;
-        cells[sV][tmp2]->set_bottom_edge(false);
-        return;
-    }
-
-
-    // 4) если все стороны больше чем в две ячейки, продолжаем выполнять всё что ниже
+    // 2) если все стороны больше чем в две ячейки, продолжаем выполнять всё что ниже
 
     // находим номера ячеек по которым будут проходить границы
-    int indexH = qrand() % (nH - 1);
-    int indexV = qrand() % (nV - 1);
+    int indexH, indexV;
+    if (nH == 2)
+        indexH = 0;
+    else
+        indexH = qrand() % (nH - 1);
+
+    if (nV == 2)
+        indexV = 0;
+    else
+        indexV = qrand() % (nV - 1);
 
     // разбиваем комнату на четыре сектора
     for (int i = 0; i < nV; i++)
@@ -173,7 +135,7 @@ void Maze::generate(int nH, int nV, int sH, int sV) {
     if ( indexH == 0 ) {
         holeH = 0;
         cells[indexV + sV][holeH + sH]->set_bottom_edge(false);
-        holeH = qrand() % (nH - 2) + 1;
+        holeH = 1;
         cells[indexV + sV][holeH + sH]->set_bottom_edge(false);
     } else if ( nH - indexH == 2 ) {
         holeH = qrand() % (indexH + 1);
@@ -190,7 +152,7 @@ void Maze::generate(int nH, int nV, int sH, int sV) {
     if ( indexV == 0 ) {
         holeV = 0;
         cells[holeV + sV][indexH + sH]->set_right_edge(false);
-        holeV = qrand() % (nV - 2 ) + 1;
+        holeV = 1;
         cells[holeV + sV][indexH + sH]->set_right_edge(false);
     } else if ( nV - indexV == 2 ) {
         holeV = qrand() % (indexV + 1);
